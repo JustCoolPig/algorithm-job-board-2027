@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>算法岗位工作台</title><meta name="robots" content="noindex,nofollow"><meta name="description" content="算法研究岗位与投递记录"><link rel="icon" type="image/svg+xml" href="favicon.svg?v=1"><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="top"><div class="header-inner"><div><h1>算法岗位工作台</h1><p id="asof">正在加载…</p></div><button id="export-records" class="quiet">导出记录</button></div></header>
+<main>
+<nav class="tabs" aria-label="工作台页面"><button class="tab active" data-tab="jobs" aria-pressed="true">研究岗位</button><button class="tab" data-tab="records" aria-pressed="false">我的记录 <span id="record-count"></span></button></nav>
+<section id="jobs-page">
+<form id="filters" class="filters" role="search">
+<div class="primary-filters">
+<label class="search-label">搜索<input id="search" type="search" placeholder="公司、岗位或城市" autocomplete="off"></label>
+<label>单位类型<select id="employer-type"><option value="">全部类型</option><option>银行</option><option>央国企</option><option>事业单位</option><option>其他企业/机构</option><option>待核实</option></select></label>
+<label>排序<select id="sort"><option value="published">官网发布较新</option><option value="fit">匹配程度</option><option value="deadline">即将截止</option></select></label>
+<label>招聘状态<select id="lifecycle"><option value="current">未确认过期</option><option value="expired">已过期</option><option value="review">截止待核</option><option value="all">全部（含过期）</option></select></label>
+<label class="check"><input id="company-applied" type="checkbox">已投公司／岗位</label>
+</div>
+<div class="filter-bottom"><details class="more-filters" open><summary>更多筛选</summary><div class="advanced-grid">
+<label>匹配程度<select id="grade"><option value="all">全部</option><option value="strong">直接／方向相关</option><option value="A">直接相关</option><option value="B+">方向相关</option><option value="B">条件备选</option></select></label>
+<label>方向<select id="direction"><option value="">全部方向</option></select></label>
+<label>城市<select id="city"><option value="">全部城市</option></select></label>
+<label id="status-label" hidden>投递状态<select id="status"><option value="">全部岗位</option><option value="new">新投候选</option><option value="pending">待核实</option><option value="applied">已有流程／限额</option></select></label>
+<label class="check"><input id="favorites-only" type="checkbox">只看收藏</label>
+<label class="check"><input id="doctoral-only" type="checkbox">只看博士相关岗位</label>
+</div></details><button type="reset" class="quiet reset">清空筛选</button></div>
+</form>
+<div class="result-head"><p id="result-summary" role="status"></p><p id="expiry-summary"></p></div>
+<details id="excluded-companies" class="board-help"><summary>已删除公司 <span id="excluded-count"></span></summary><div id="excluded-list" class="help-body"><p>正在读取已删除公司…</p></div></details>
+<details class="board-help"><summary>说明</summary><div class="help-body"><p>直接相关：核心研究或训练经验吻合；方向相关：经验可迁移，但有领域或技能缺口；条件备选：与主线较远或资格待确认。匹配程度不代表满足全部资格。</p><p>每集团最多10个岗位。按北京时间判断截止，日期当天结束后转为过期。公司批次截止未必适用于每个岗位，具体证据见详情。记为已投只登记记录，不会提交申请。</p><p id="employer-type-note"></p><p id="source-sort-note"></p><p id="private-note"></p></div></details>
+<div id="results"><p class="empty">正在加载…</p></div><div class="load-area"><button id="load-more" class="button secondary" hidden>再显示15家公司</button></div>
+</section>
+<section id="records-page" hidden><div class="record-toolbar"><label>搜索记录<input id="record-search" type="search" placeholder="公司或岗位"></label><label>记录状态<select id="record-status"><option value="">全部状态</option></select></label><button id="add-record" class="button">添加记录</button></div><div id="records"></div></section>
+<p id="message" role="status" class="message" hidden></p>
+<footer>投递记录新增和修改保存在当前浏览器，可导出备份。隐藏公司只影响当前浏览器的岗位列表。</footer>
+</main>
+<dialog id="detail" aria-labelledby="detail-title"><div class="dialog-head"><h2 id="detail-title"></h2><button id="close-detail" class="quiet" aria-label="关闭岗位详情">关闭</button></div><div id="detail-content"></div></dialog>
+<dialog id="record-dialog" aria-labelledby="record-title"><div class="dialog-head"><h2 id="record-title">添加投递记录</h2><button id="close-record" class="quiet" type="button">关闭</button></div><form id="record-form" class="record-form"><p class="notice">登记已完成的投递，不会向招聘方提交申请。</p><label>公司<input name="company" required maxlength="200"></label><label>岗位<input name="role" required maxlength="300"></label><label>招聘批次<input name="plan" maxlength="200"></label><label>投递日期<input name="date" type="date" required></label><label>状态<input name="status" list="record-status-list" required maxlength="100"></label><datalist id="record-status-list"><option value="已投递"><option value="流程中"><option value="面试中"><option value="已结束"><option value="已拒绝"><option value="已获Offer"></datalist><label>备注<textarea name="notes" rows="3" maxlength="4000"></textarea></label><button class="button" type="submit">保存记录</button><p id="record-error" role="alert" hidden></p></form></dialog>
+<dialog id="company-dialog" aria-labelledby="company-dialog-title"><div class="dialog-head"><h2 id="company-dialog-title">删除公司</h2><button id="close-company" class="quiet" type="button">关闭</button></div><div class="company-dialog-body"><p id="company-scope"></p><p id="company-delete-note">整个集团及关联名称将从岗位列表隐藏。已有投递记录和收藏保留，可在“已删除公司”中恢复。</p><p id="company-error" role="alert" hidden></p><div id="company-management" hidden><p>输入独立管理口令，本浏览器记住。</p><form id="management-form" class="management-form"><label>管理口令<input id="management-key" type="password" autocomplete="current-password" required maxlength="256"></label><button id="enable-management" class="button secondary" type="submit">启用管理</button></form></div><button id="confirm-company-delete" class="button" type="button">隐藏公司</button></div></dialog>
+<script src="lifecycle.js"></script><script src="company-exclusion-rules.js"></script><script src="application-quota.js"></script><script src="app.js"></script>
+</body></html>
